@@ -151,6 +151,30 @@ medusaIntegrationTestRunner({
         )
       })
 
+      it("should list customers filtered by phone", async () => {
+        await api.post(
+          `/admin/customers/${customer1.id}`,
+          {
+            phone: "+1234567890",
+          },
+          adminHeaders
+        )
+
+        const response = await api.get(
+          "/admin/customers?phone=+1234567890",
+          adminHeaders
+        )
+
+        expect(response.status).toEqual(200)
+        expect(response.data.count).toEqual(1)
+        expect(response.data.customers).toEqual([
+          expect.objectContaining({
+            id: customer1.id,
+            phone: "+1234567890",
+          }),
+        ])
+      })
+
       it("should list customers with expand query", async () => {
         await api.post(
           `/admin/customers/${customer1.id}/addresses`,
